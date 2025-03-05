@@ -1,12 +1,12 @@
 import logging
 import os
 from firebase_admin import credentials, auth, initialize_app, get_app
-from .serializers import UserSerializer
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserSerializer
 
 # Initialize Firebase Admin SDK
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,9 +44,14 @@ def signup(request):
         decoded_token = auth.verify_id_token(id_token)
         uid = decoded_token['uid']
 
+        # Check if the user already exists
+        if User.objects.filter(username=uid).exists():
+            logger.error("User already exists")
+            return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
         # Create user in Django
         user = User.objects.create_user(
-            username=username, email=email, password=password)
+            username=uid, email=email, password=password)
         user.save()
 
         # Serialize user data
@@ -56,9 +61,6 @@ def signup(request):
     except auth.InvalidIdTokenError:
         logger.error("Invalid ID token")
         return Response({"error": "Invalid ID token"}, status=status.HTTP_401_UNAUTHORIZED)
-    except User.DoesNotExist:
-        logger.error("User already exists")
-        return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         logger.error(f"Signup failed: {str(e)}")
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -71,6 +73,12 @@ def login(request):
     try:
         decoded_token = auth.verify_id_token(id_token)
         uid = decoded_token['uid']
+
+        # Check if the user exists
+        if not User.objects.filter(username=uid).exists():
+            logger.error("User does not exist")
+            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
         user = User.objects.get(username=uid)
         logger.info(f"User logged in: {user.username}")
         tokens = get_tokens_for_user(user)
@@ -78,6 +86,6 @@ def login(request):
     except auth.InvalidIdTokenError:
         logger.error("Invalid ID token")
         return Response({"error": "Invalid ID token"}, status=status.HTTP_401_UNAUTHORIZED)
-    except User.DoesNotExist:
-        logger.error("User does not exist")
-        return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"Login failed: {str(e)}")
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
