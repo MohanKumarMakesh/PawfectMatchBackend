@@ -11,7 +11,8 @@ from .serializers import UserSerializer
 # Initialize Firebase Admin SDK
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 cred = credentials.Certificate(
-    os.path.join(BASE_DIR, 'pawfectmatch-1a858-firebase-adminsdk-fbsvc-789e8e1919.json'))
+    os.path.join(BASE_DIR, 'firebase.json'))
+print(BASE_DIR + 'firebase.json')
 
 # Check if the default app is already initialized
 try:
