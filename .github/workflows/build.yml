@@ -22,7 +22,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Set up Firebase environment variables
+      - name: Set up  environment variables
         run: |
           echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
           echo "DEBUG=${{ secrets.DJANGO_DEBUG }}" >> .env
