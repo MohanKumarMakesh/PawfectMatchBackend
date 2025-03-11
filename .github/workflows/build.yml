@@ -48,3 +48,29 @@ jobs:
         with:
           name: build-artifacts
           path: deploy-package.zip
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.12" # Specify the Python version you are using
+
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+
+      - name: Deploy to Elastic Beanstalk
+        run: |
+          eb init -p python-3.12 my-app --region us-east-1  # Change 'my-app' to your Elastic Beanstalk application name and region
+          eb deploy --staged
