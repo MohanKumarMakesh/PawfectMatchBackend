@@ -35,7 +35,7 @@ jobs:
           echo "DB_HOST=${{ secrets.DJANGO_DB_HOST }}" >> .env
           echo "DB_PORT=${{ secrets.DJANGO_DB_PORT }}" >> .env
           echo "FIREBASE_CREDENTIALS_PATH=${{ secrets.DJANGO_FIREBASE_CREDENTIALS_PATH }}" >> .env
-
+          ls -la
       - name: Run tests
         run: |
           python manage.py test
