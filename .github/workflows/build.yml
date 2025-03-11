@@ -49,7 +49,7 @@ jobs:
           name: build-artifacts
           path: deploy-package.zip
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: build
     runs-on: self-hosted
 
     steps:
