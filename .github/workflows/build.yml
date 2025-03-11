@@ -86,5 +86,6 @@ jobs:
 
       - name: Deploy to Elastic Beanstalk
         run: |
-          eb init -p python-3.12 my-app --region us-east-1  # Change 'my-app' to your Elastic Beanstalk application name and region
+          pwd
+          eb init -p python-3.12 pawfectmatch --region us-east-1  # Change 'my-app' to your Elastic Beanstalk application name and region
           eb deploy --staged
