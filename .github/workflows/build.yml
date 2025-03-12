@@ -23,21 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Set up environment variables
-        run: |
-          touch .env
-          echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
-          echo "DEBUG=${{ secrets.DJANGO_DEBUG }}" >> .env
-          echo "ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}" >> .env
-          echo "CORS_ALLOW_ALL_ORIGINS=${{ secrets.DJANGO_CORS_ALLOW_ALL_ORIGINS }}" >> .env
-          echo "DB_NAME=${{ secrets.DJANGO_DB_NAME }}" >> .env
-          echo "DB_USER=${{ secrets.DJANGO_DB_USER }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DJANGO_DB_PASSWORD }}" >> .env
-          echo "DB_HOST=${{ secrets.DJANGO_DB_HOST }}" >> .env
-          echo "DB_PORT=${{ secrets.DJANGO_DB_PORT }}" >> .env
-          echo "FIREBASE_CREDENTIALS_PATH=${{ secrets.DJANGO_FIREBASE_CREDENTIALS_PATH }}" >> .env
-          cat .env
-          ls -la
       - name: Run tests
         run: |
           python manage.py test
@@ -88,6 +73,5 @@ jobs:
 
       - name: Deploy to Elastic Beanstalk
         run: |
-          pwd
-          eb init -p python-3.12 pawfectmatch --region us-east-1  # Change 'my-app' to your Elastic Beanstalk application name and region
+          eb init -p python-3.12 pawfectmatch --region us-east-1  # Change 'pawfectmatch' to your Elastic Beanstalk application name and region
           eb deploy --staged
