@@ -25,6 +25,7 @@ jobs:
 
       - name: Set up environment variables
         run: |
+          echo "${{ secrets.DJANGO_SECRET_KEY }}"
           echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
           echo "DEBUG=${{ secrets.DJANGO_DEBUG }}" >> .env
           echo "ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}" >> .env
