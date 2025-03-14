@@ -36,5 +36,8 @@ def add_dog(request):
             serializer.validated_data['image'] = image_url
 
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # Fetch the updated list of dogs
+        dogs = Dog.objects.all()
+        updated_serializer = DogSerializer(dogs, many=True)
+        return Response(updated_serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
