@@ -1,4 +1,5 @@
 import io
+import logging
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,6 +9,8 @@ from django.conf import settings
 from .models import Dog
 from .serializers import DogSerializer
 
+# Set up logging
+logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def get_dogs(request):
@@ -28,7 +31,7 @@ def add_dog(request):
                 img.save(output, format='JPEG', quality=85)
                 output.seek(0)
                 image = output
-
+            print(settings.AWS_STORAGE_BUCKET_NAME)
             s3 = boto3.client('s3')
             s3.upload_fileobj(
                 image, settings.AWS_STORAGE_BUCKET_NAME, f'dogs/{image.name}')
@@ -40,4 +43,6 @@ def add_dog(request):
         dogs = Dog.objects.all()
         updated_serializer = DogSerializer(dogs, many=True)
         return Response(updated_serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        logger.error(f"Serializer errors: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
