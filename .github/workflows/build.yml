@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.12" # Specify the Python version you are using
+          python-version: "3.12.3" # Specify the Python version you are using
 
       - name: Install dependencies
         run: |
@@ -49,7 +49,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.12" # Specify the Python version you are using
+          python-version: "3.12.3" # Specify the Python version you are using
 
       - name: Check for AWS CLI and install if not present
         run: |
