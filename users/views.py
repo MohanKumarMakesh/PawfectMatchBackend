@@ -29,6 +29,7 @@ def get_tokens_for_user(user):
     return {
         'refresh': str(refresh),
         'access': str(refresh.access_token),
+        'user_id': user.id,
     }
 
 
@@ -58,7 +59,12 @@ def signup(request):
         # Serialize user data
         serializer = UserSerializer(user)
         tokens = get_tokens_for_user(user)
-        return Response({"message": "Signup successful", "user": serializer.data, "tokens": tokens}, status=status.HTTP_201_CREATED)
+        return Response({
+            "message": "Signup successful",
+            "user": serializer.data,
+            "tokens": tokens,
+            "user_id": user.id  # Include user_id in the response
+        }, status=status.HTTP_201_CREATED)
     except auth.InvalidIdTokenError:
         logger.error("Invalid ID token")
         return Response({"error": "Invalid ID token"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -83,7 +89,11 @@ def login(request):
         user = User.objects.get(username=uid)
         logger.info(f"User logged in: {user.username}")
         tokens = get_tokens_for_user(user)
-        return Response({"message": "Login successful", "tokens": tokens}, status=status.HTTP_200_OK)
+        return Response({
+            "message": "Login successful",
+            "tokens": tokens,
+            "user_id": user.id  # Include user_id in the response
+        }, status=status.HTTP_200_OK)
     except auth.InvalidIdTokenError:
         logger.error("Invalid ID token")
         return Response({"error": "Invalid ID token"}, status=status.HTTP_401_UNAUTHORIZED)
