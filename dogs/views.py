@@ -108,7 +108,6 @@ def update_dog(request, dog_id):
     except Exception as e:
         logger.error(f"Error updating dog: {str(e)}")
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])  # Ensure the user is authenticated
 def delete_dog(request, dog_id):
