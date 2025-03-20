@@ -69,7 +69,7 @@ jobs:
 
       - name: Deploy to Elastic Beanstalk
         run: |
-          eb init -p python-3.12 pawfectmatch --region us-east-1  # Change 'pawfectmatch' to your Elastic Beanstalk application name and region
+          eb init -p python-3.12 pawfectmatch --region us-east-1  
           eb deploy --staged
 
       - name: Clean up
