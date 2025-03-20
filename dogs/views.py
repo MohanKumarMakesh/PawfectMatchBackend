@@ -28,7 +28,7 @@ def get_dogs(request):
 
 @api_view(['POST'])
 def add_dog(request):
-    image = request.FILES.get['image']
+    image = request.FILES.get('image')
     if not image:
         return Response({"error": "Image is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -97,7 +97,7 @@ def update_dog(request, dog_id):
                     logger.warning(f"Failed to delete old image from S3: {str(e)}")
 
             # Upload the new image to S3
-            image = request.FILES.get['image']
+            image = request.FILES.get('image')
             if image.size > (1024 * 1024):  # Check if image size is greater than 1 MB
                 img = Image.open(image)
                 output = io.BytesIO()
