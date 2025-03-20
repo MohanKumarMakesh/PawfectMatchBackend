@@ -64,7 +64,8 @@ jobs:
         run: |
           if ! command -v eb &> /dev/null
           then
-            pip install awsebcli
+            pip install --user awsebcli
+            export PATH=$PATH:$HOME/.local/bin
           fi
 
       - name: Deploy to Elastic Beanstalk
