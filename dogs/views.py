@@ -87,9 +87,12 @@ def update_dog(request, dog_id):
         if 'image' in request.FILES:
             # Delete the old image from S3 if it exists
             if dog.image:
-                s3 = boto3.client('s3')
-                s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-                                 Key=f'dogs/{dog.image.split("/")[-1]}')
+                try:
+                    s3 = boto3.client('s3')
+                    s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                                     Key=f'dogs/{dog.image.split("/")[-1]}')
+                except Exception as e:
+                    logger.warning(f"Failed to delete old image from S3: {str(e)}")
 
             # Upload the new image to S3
             image = request.FILES['image']
