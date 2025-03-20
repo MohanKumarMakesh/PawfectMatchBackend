@@ -96,6 +96,12 @@ def update_dog(request, dog_id):
 
             # Upload the new image to S3
             image = request.FILES['image']
+            if image.size > (1024 * 1024):  # Check if image size is greater than 1 MB
+                img = Image.open(image)
+                output = io.BytesIO()
+                img.save(output, format='JPEG', quality=85)
+                output.seek(0)
+                image = output
             s3.upload_fileobj(
                 image, settings.AWS_STORAGE_BUCKET_NAME, f'dogs/{image.name}')
             dog.image = f'https://{settings.AWS_S3_CUSTOM_DOMAIN}/dogs/{image.name}'
@@ -108,6 +114,7 @@ def update_dog(request, dog_id):
     except Exception as e:
         logger.error(f"Error updating dog: {str(e)}")
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])  # Ensure the user is authenticated
 def delete_dog(request, dog_id):
