@@ -73,7 +73,37 @@ def add_dog(request):
         logger.error(f"Error uploading image: {str(e)}")
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])  # Ensure the user is authenticated
+def update_dog(request, dog_id):
+    try:
+        # Fetch the dog object and ensure it belongs to the authenticated user
+        dog = Dog.objects.get(id=dog_id, user=request.user)
 
+        # Update the dog's details
+        data = request.data
+        if 'name' in data:
+            dog.name = data['name']
+        if 'image' in request.FILES:
+            # Delete the old image from S3
+            s3 = boto3.client('s3')
+            s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                             Key=f'dogs/{dog.image.split("/")[-1]}')
+
+            # Upload the new image to S3
+            image = request.FILES['image']
+            s3.upload_fileobj(
+                image, settings.AWS_STORAGE_BUCKET_NAME, f'dogs/{image.name}')
+            dog.image = f'https://{settings.AWS_S3_CUSTOM_DOMAIN}/dogs/{image.name}'
+
+        dog.save()
+        serializer = DogSerializer(dog)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Dog.DoesNotExist:
+        return Response({"error": "Dog not found or you do not have permission to update this dog"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"Error updating dog: {str(e)}")
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])  # Ensure the user is authenticated
 def delete_dog(request, dog_id):
