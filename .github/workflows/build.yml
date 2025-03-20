@@ -69,6 +69,7 @@ jobs:
 
       - name: Deploy to Elastic Beanstalk
         run: |
+          COMMIT_HASH=$(git rev-parse --short=4 HEAD)
           eb init -p python-3.12 pawfectmatch --region us-east-1  
           eb deploy --staged
 
