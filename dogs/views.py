@@ -85,10 +85,11 @@ def update_dog(request, dog_id):
         if 'name' in data:
             dog.name = data['name']
         if 'image' in request.FILES:
-            # Delete the old image from S3
-            s3 = boto3.client('s3')
-            s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-                             Key=f'dogs/{dog.image.split("/")[-1]}')
+            # Delete the old image from S3 if it exists
+            if dog.image:
+                s3 = boto3.client('s3')
+                s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                                 Key=f'dogs/{dog.image.split("/")[-1]}')
 
             # Upload the new image to S3
             image = request.FILES['image']
@@ -104,6 +105,7 @@ def update_dog(request, dog_id):
     except Exception as e:
         logger.error(f"Error updating dog: {str(e)}")
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])  # Ensure the user is authenticated
 def delete_dog(request, dog_id):
