@@ -28,7 +28,7 @@ def get_dogs(request):
 
 @api_view(['POST'])
 def add_dog(request):
-    image = request.FILES.get('image')
+    image = request.FILES.get['image']
     if not image:
         return Response({"error": "Image is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -79,7 +79,7 @@ def update_dog(request, dog_id):
     try:
         # Fetch the dog object and ensure it belongs to the authenticated user
         dog = Dog.objects.get(id=dog_id, user=request.user)
-
+        print("Dog:", dog)
         # Update the dog's details
         data = request.data
         print("Data:", data)
@@ -88,6 +88,7 @@ def update_dog(request, dog_id):
         if 'image' in request.FILES:
             # Delete the old image from S3 if it exists
             if dog.image:
+                print("Dog image:", dog.image)
                 try:
                     s3 = boto3.client('s3')
                     s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
@@ -96,7 +97,7 @@ def update_dog(request, dog_id):
                     logger.warning(f"Failed to delete old image from S3: {str(e)}")
 
             # Upload the new image to S3
-            image = request.FILES['image']
+            image = request.FILES.get['image']
             if image.size > (1024 * 1024):  # Check if image size is greater than 1 MB
                 img = Image.open(image)
                 output = io.BytesIO()
