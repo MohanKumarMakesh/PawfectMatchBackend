@@ -28,7 +28,6 @@ def get_dogs(request):
 
 @api_view(['POST'])
 def add_dog(request):
-    print("Data received from frontend:", request.data)  # Print the data sent from the frontend
     image = request.FILES.get('image')
     if not image:
         return Response({"error": "Image is required"}, status=status.HTTP_400_BAD_REQUEST)

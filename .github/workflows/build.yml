@@ -79,5 +79,4 @@ jobs:
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
           rm deploy-package.zip
-          rm -rf _work/*
-          rm -rf _externals/*
+         
