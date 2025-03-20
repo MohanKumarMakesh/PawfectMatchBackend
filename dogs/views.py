@@ -82,6 +82,7 @@ def update_dog(request, dog_id):
 
         # Update the dog's details
         data = request.data
+        print("Data:", data)
         if 'name' in data:
             dog.name = data['name']
         if 'image' in request.FILES:
