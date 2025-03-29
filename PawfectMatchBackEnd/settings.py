@@ -39,6 +39,7 @@ CORS_ALLOW_HEADERS = ["*"]
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     "GET",
@@ -107,7 +108,7 @@ WSGI_APPLICATION = 'PawfectMatchBackEnd.wsgi.application'
 if os.environ.get('DJANGO_ENV') == 'production':
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
+            'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.environ.get('DB_NAME'),
             'USER': os.environ.get('DB_USER'),
             'PASSWORD': os.environ.get('DB_PASSWORD'),
@@ -186,7 +187,7 @@ SIMPLE_JWT = {
 }
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN')
-print(AWS_S3_CUSTOM_DOMAIN)
+
 
 
 # S3 Storage configuration
