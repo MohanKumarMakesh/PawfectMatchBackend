@@ -34,12 +34,12 @@ jobs:
           path: deploy-package.zip
   test:
     runs-on: self-hosted
-
+    needs: build
     steps:
       - name: pytest
         run:  echo "TEST COMPLETED"
   deploy:
-    needs: build
+    needs: test
     runs-on: self-hosted
 
     steps:
